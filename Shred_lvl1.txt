@@ -1,0 +1,32 @@
+day,breakfast,snack1,lunch,snack2,dinner
+monday,1 total_mushroom omelet,1 total_protein bar,1 total_chef salad,2 ounces_soy nuts,6 ounces_salmon
+monday,1 cups_fresh strawberries,1 total_recovery drink*,x,x,2 tablespoons_lemon-dill sauce
+monday,8 ounces_cottage cheese 1%,x,x,x,.5 cups_asparagus
+monday,x,x,x,x,1 cups_wild rice
+monday,x,x,x,x,1 cups_red pepper soup
+monday,x,x,x,x,1 tablespoons_protein powder
+tuesday,1 total_protein shake,1 total_protein bar,1 total_shrimp stir-fry,1.5 ounces_string cheese,6 ounces_turkey
+tuesday,x,1 total_recovery drink*,1 tablespoons_sesame seeds,x,2 tablespoons_gravy
+tuesday,x,x,1 ounces_cashews,2 ounces_soy nuts,.5 cups_green beans
+tuesday,x,x,x,x,1 cups_butternut squash soup
+tuesday,x,x,x,x,1 tablespoons_protein powder
+wednesday,2 slices_turkey bacon,1 total_protein bar,1 total_chicken salad,x,6 ounces_halibut
+wednesday,1 total_chicken scramble,1 total_recovery drink*,2 cups_salad greens,x,2 tablespoons_pesto sauce
+wednesday,4 ounces_fresh-squeezed juice,x,1 cups_vegetable soup,x,1 cups_wild rice
+wednesday,x,x,1 tablespoons_protein powder,x,.5 cups_zucchini
+thursday,1 total_soy sausage muffin,1 total_protein bar,1 total_steak&arugula salad,1 ounces_turkey jerky,6 ounces_chicken breast
+thursday,8 ounces_skim milk,1 total_recovery drink*,2 tablespoons_balsamic vinaigrette,x,2 tablespoons_honey-chile sauce
+thursday,x,x,x,x,1 cups_quinoa
+thursday,x,x,x,x,.5 cups_snap peas
+friday,1 total_spinach scramble,1 total_protein bar,6 ounces_turkey burger,8 ounces_cottage cheese 1%,6 ounces_swordfish
+friday,8 ounces_skim milk,1 total_recovery drink*,1.5 ounces_low-fat swiss cheese,x,2 tablespoons_mango-ginger sauce
+friday,.5 total_grapefruit medium,x,.5 cups_coleslaw,x,1 cups_wild rice
+friday,x,x,1 cups_gazpacho,x,1 total_artichoke medium
+friday,x,x,1 tablespoons_protein powder,x,x
+saturday,1 total_protein shake,1 total_protein bar,1 total_island pork tenderloin salad,1 ounces_turkey jerky,1 total_beef & broccoli stir-fry
+saturday,x,1 total_recovery drink*,x,x,1 cups_miso soup
+saturday,x,x,x,x,1 tablespoons_protein powder
+sunday,2 slices_turkey bacon,1 total_protein bar,1 total_tuna salad,8 ounces_cottage cheese 1%,6 ounces_lemon-garlic chicken
+sunday,1 total_cheese scramble,1 total_recovery drink*,2 cups_salad greens,x,1 cups_wild rice
+sunday,8 ounces_skim milk,x,1 cups_chilled cucumber soup,x,1 cups_asparagus soup
+sunday,.25 total_cantaloupe medium,x,x,x,1 tablespoons_protein powder
