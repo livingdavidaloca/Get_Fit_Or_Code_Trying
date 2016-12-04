@@ -183,7 +183,7 @@ for cook in list(cook_dict.keys()):
                         if food in list(second_grocery_dict.keys()):
                             number, original_size = second_grocery_dict[food].split(' ')                            
                             multiplier, measurement = first_grocery_dict[grocery].split(' ')
-                            number = total_count[str(int(float((multiplier)))) + ' ' + measurement + '_' + grocery]                            
+                            number = total_count[str(int(float(multiplier))) + ' ' + measurement + '_' + grocery]                            
                             original_amount, original_measurement = third_grocery_dict[food].split(' ')                     
                             log.write(food + ' will be overridden\n')
                             log.write('original size is ' + original_amount + ' '+ original_measurement + '\n')
