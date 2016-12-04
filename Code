@@ -1,0 +1,233 @@
+# Import necessary packages
+import pandas as pd
+import os
+
+# Specify pathway for initial data file and log, and create dataframe
+#os.chdir('Enter desired pathway here')
+log = open('log.txt', 'w')
+shred1 = pd.read_csv('Shred_lvl1.txt').set_index('day')
+meals = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner']
+
+# Define the conversion function
+def convert(food, portion, new_size, original_size):
+    if original_size == 'cups':
+        if new_size == 'tablespoons':
+            portion = portion/16
+        elif new_size == 'teaspoons':
+            portion = portion/48
+        elif new_size == 'ounces':
+            portion = portion/8
+        else:
+            log.write(new_size + ' does not convert well in food ' + food + '\n\n')
+    elif original_size == 'tablespoons':
+        if new_size == 'cups':
+            portion = portion/0.0625
+        elif new_size == 'teaspoons':
+            portion = portion/3
+        elif new_size == 'ounces':
+            portion = portion/0.5
+        else:
+            log.write(new_size + ' does not convert well in food ' + food + '\n\n')
+    elif original_size == 'teaspoons':
+        if new_size == 'tablespoons':
+            portion = portion/0.3333
+        elif new_size == 'cups':
+            portion = portion/0.0208333
+        elif new_size == 'ounces':
+            portion = portion/0.166667
+        else:
+            log.write(new_size + ' does not convert well in food ' + food + '\n\n')
+    elif original_size == 'ounces':
+        if new_size == 'tablespoons':
+            portion = portion/2
+        elif new_size == 'cups':
+            portion = portion/0.125
+        elif new_size == 'teaspoons':
+            portion = portion/6
+        else:
+            log.write(new_size + ' does not convert well in food ' + food + '\n\n')
+    else:
+        log.write('original size is ' + original_size + ' and does not convert well. Food is ' + food + '\n\n')
+    return float(portion)
+
+# Create a dictionary of all foods by meal to create a list of all foods    
+all_foods = {}
+for meal in meals:
+    all_foods[meal] = list(shred1[meal])
+all_list = []
+for listing in list(all_foods.values()):
+    for item in listing:
+        if item != 'x':
+            all_list.append(item) 
+
+# Create a dictionary of unique foods by meal to create a list of all 
+# unique foods            
+unique_foods = {}
+for meal in meals:
+    unique_foods[meal] = list(shred1[meal].unique())    
+unique_list = []
+for listing in list(unique_foods.values()):
+    for item in listing:
+        if item not in unique_list and item != 'x':
+            unique_list.append(item)
+
+# Use the lists of all foods and all unique foods to count occurences of 
+# foods and create a dictionary of unique food counts             
+total_count = {}
+for all_food in all_list:
+    for unique_food in unique_list:
+        if all_food == unique_food:
+            if all_food in list(total_count.keys()):
+                total_count[all_food] += 1
+            else:
+                total_count[all_food] = 1
+
+log.write('Now entering the first grocery list...\n\n\n')                 
+
+# Create the first grocery list using the dataframe and total unique count 
+# dictionary                 
+first_grocery_dict = {}        
+for foods in unique_list:
+    portion, food = foods.split('_')
+    portions, size = portion.split(' ')
+    for key in list(total_count.keys()):
+        if key == foods:
+            first_grocery_dict[food] = str(total_count[key]*float(portions)) + ' ' + size
+            log.write('Adding '+ food + ' at ' + str(first_grocery_dict[food].split(' ')[0]) + ' ' + str(first_grocery_dict[food].split(' ')[1]) + '\n')
+
+# Create a dictionary of foods that must be cooked as keys 
+# and all ingredients as values                                           
+cook_dict = {'mushroom omelet':['6 total_egg whites', '.75 cups_mushrooms sliced', '2 tablespoons_green onion chopped', '.5 total_roma tomato chopped', '1.5 ounces_low-fat cheddar cheese shredded'], 
+             'cheese scramble':['6 total_egg whites', '2 tablespoons_skim milk', '1.5 ounces_mozzarella cheese part-skim grated'], 
+             'chef salad':['3 ounces_fat-free turkey breast chopped', '3 ounces_ham extra lean low sodium chopped', '1.5 ounces_fat-free mozzarella cheese chopped', '.5 total_roma tomato chopped', '2 cups_romaine lettuce chopped', '.25 cups_hearts of palm chopped', '1 ounces_avocado diced', '2 tablespoons_low-fat ranch dressing'], 
+             'lemon-dill sauce':['.5 cups_shallots chopped', '2 cups_white cooking wine', '2 tablespoons_arrowroot', '2 cups_fat-free chicken broth low sodium', '6 tablespoons_lemon juice', '1 teaspoons_lemongrass minced', '1 tablespoons_fresh dill chopped'], 
+             'protein shake':['1 cups_skim milk', '1 scoop_protein powder1', '.5 cups_berries', '.5 total_banana', '.5 cups_ice'], 
+             'shrimp stir-fry':['6 ounces_shrimp peeled', '.25 tablespoons_low-sodium soy sauce', '.5 teaspoons_rice vinegar', '.25 cups_fat-free chicken broth', '.25 teaspoons_garlic minced', '.25 teaspoons_ginger minced', '.5 cups_red onion sliced in wedges', '.5 cups_broccoli florets', '1.25 cups_snow peas trimmed', '1.5 cups_mushrooms halved', '.25 cups_yellow bell pepper cubed', '.25 cups_canned water chestnuts drained'], 
+             'chicken salad':['6 ounces_boneless skinless chicken breast halves', '2 tablespoons_low-fat mayonnaise', '.75 tablespoons_dijon mustard', '2 tablespoons_green onions diced', '.125 teaspoons_black pepper', '.125 teaspoons_fresh dill', '.25 cups_celery diced'], 
+             'chicken scramble':['6 total_egg whites', '3 ounces_chicken breast cooked and diced', '1.5 ounces_fat-free parmesan cheese grated', '.5 tablespoons_fresh basil chopped'], 
+             'vegetable soup':['10 cups_fat-free chicken broth low sodium', '4 total_red potatoes cut into 1-inch cubes', '4 cups_onions quartered', '1 cups_carrots sliced 1 inch thick', '3 cups_celery sliced 1 inch thick', '2 cups_zucchini sliced 1 inch thick', '8 ounces_tomato sauce canned', '2 total_cloves garlic minced', '1 bunch_fresh parsley chopped', '.25 bunch_cilantro chopped1'], 
+             'soy sausage muffin':['3 total_soy sausage patties (approximately 80 calories each)', '1.5 total_whole wheat english muffins', '2.75 ounces_fat-free mozzarella cheese'], 
+             'steak&arugula salad':['6 ounces_top sirloin', '2 cups_arugula', '.5 pint_cherry tomatoes halved', '.5 cups_canned artichoke hearts drained', '2 tablespoons_balsamic vinaigrette'], 
+             'balsamic vinaigrette':['1.5 cups_balsamic vinegar', '2 tablespoons_fresh lemon juice', '6 tablespoons_dijon mustard', '4 teaspoons_shallots chopped', '4 teaspoons_fresh basil chopped', '2 teaspoons_olive oil'], 
+             'cumin vinaigrette':['2 tablespoons_fresh lime juice', '.5 tablespoons_orange juice', '.5 tablespoons_dijon mustard', '.5 teaspoons_cumin powder', '.25 teaspoons_salt', '.125 teaspoons_black pepper', '1 tablespoons_olive oil'],
+             'pesto sauce':['1 cups_pine nuts', '4 cups_fresh basil packed', '2 tablespoons_garlic chopped', '1 cups_fat-free parmesan cheese grated', '.33 cups_white cooking wine', '.33 cups_lemon juice', '.5 cups_fat-free chicken broth low sodium', '.5 teaspoons_salt'], 
+             'honey-chile sauce':['.25 cups_shallots chopped fine', '.67 cups_honey slightly warmed', '.25 cups_sherry vinegar', '1 teaspoons_pasilla chile powder', '.25 teaspoons_ground cumin', '1.5 cups_fat-free chicken broth low sodium', '1 teaspoons_cilantro chopped', '3 tablespoons_chopped pecans toasted'], 
+             'spinach scramble':['.5 cups_roma tomato diced', '1 cups_spinach leaves cleaned and dried', '6 total_egg whites', '1.5 ounces_feta cheese crumbled', '1 tablespoons_fresh basil chopped'], 
+             'turkey burger':['6 ounces_extra lean 97% fat-free ground turkey', '1.5 tablespoons_sourdough bread crumbs', '3 tablespoons_low-fat buttermilk', '2.25 teaspoons_green onions, minced', '2.25 teaspoons_parsley, chopped', '.25 teaspoons_dijon mustard', '1 dash_worcestershire sauce1'], 
+             'coleslaw':['3 cups_green cabbage shredded', '1 cups_red cabbage shredded', '1 cups_jicama julienned', '.5 total_red onion finely chopped1', '2 total_red delicious apples finely diced', '.5 cups_fat-free mayonnaise', '.33 cups_white vinegar', '2 tablespoons_fructose', '2 teaspoons_fructose', '2 tablespoons_dijon mustard', '2 teaspoons_dijon mustard', '1.5 teaspoons_caraway seed', '.25 teaspoons_salt'], 
+             'gazpacho':['28 ounces_canned tomatoes low sodium', '3 cups_low-sodium tomato juice', '2.5 cups_hothouse cucumbers peeled and diced', '.5 cups_carrots peeled and diced', '.75 cups_green bell pepper diced', '.75 cups_red bell pepper diced', '.5 total_red onion diced', '2 total_shallots', '2 total_garlic cloves', '.33 cups_red wine vinegar', '.33 cups_fresh lemon juice', '1 teaspoons_paprika', '.25 cups_fresh oregano chopped', '.25 cups_basil chopped ', '.25 cups_italian parsley chopped', '.25 teaspoons_white pepper', '.25 teaspoons_tabasco sauce'], 
+             'mango-ginger sauce':['.5 tablespoons_olive oil', '1 cups_red onion finely chopped', '1 cups_mango peeled and cubed', '.5 cups_tomato, chopped', '1.5 tablespoons_fresh ginger minced', '.25 cups_fresh lime juice', '2 tablespoons_orange juice', '2 tablespoons_dry sherry', '1.5 tablespoons_brown sugar', '1.5 tablespoons_white vinegar'], 
+             'island pork tenderloin salad':['.5 total_orange peeled and cut', '1 cups_fresh spinach', '.5 total_red bell pepper cut lengthwise into thin strips', '1 tablespoons_golden raisins', '1 cups_napa cabbage shredded', '6 ounces_island pork tenderloin', '2 tablespoons_cumin vinaigrette'], 
+             'island pork tenderloin':['16 ounces_pork tenderloin lean', '.5 teaspoons_salt', '.25 teaspoons_pepper', '.5 teaspoons_chile powder', '.5 teaspoons_ground cumin', '.5 teaspoons_cinnamon', '2 teaspoons_olive oil', '.25 cups_brown sugar packed', '.5 tablespoons_fresh garlic finely chopped', '.5 tablespoons_tabasco sauce'],
+             'beef & broccoli stir-fry':['.25 cups_soy sauce', '.5 total_red onion sliced', '1 tablespoons_garlic minced', '1.5 pound_top sirloin steak sliced 1 inch thick', '1 tablespoons_sesame oil', '2 tablespoons_rice vinegar', '1 tablespoons_ginger minced', '4 cups_broccoli florets', '8 ounces_dried soba noodles'], 
+             'miso soup':['.5 teaspoons_dark sesame oil', '.33 cups_shallots finely chopped', '3 tablespoons_miso', '1 quart_vegetable stock', '.25 cups_firm silken tofu diced', '3 tablespoons_scallions sliced'], 
+             'tuna salad':['6 ounces_tuna canned', '.75 ounces_low-fat mayonnaise', '.5 teaspoons_lemon zest', '1 tablespoons_carrots shredded', '1 tablespoons_celery chopped', '1 tablespoons_green onion chopped', '1 teaspoons_celery seeds'], 
+             'lemon-garlic chicken':['.25 cups_fresh lemon juice', '2 tablespoons_molasses', '2 teaspoons_worcestershire sauce', '4 total_garlic cloves chopped', '2 pounds_boneless skinless chicken thighs', '.25 teaspoons_salt', '.25 teaspoons_black pepper', '1 total_lemon wedges', '1 total_parsley sprigs'], 
+             'chilled cucumber soup':['1 whole_hothouse cucumber', '.5 cups_red onion chopped', '3 tablespoons_fresh dill chopped', '1 tablespoons_fresh mint chopped', '1.25 cups_nonfat plain yogurt', '.25 teaspoons_salt', '.125 teaspoons_black pepper', '.0625 teaspoons_cayenne', '.25 tablespoons_celery seed'], 
+             'asparagus soup':['1.25 cups_onions diced', '.5 teaspoons_garlic chopped', '1.5 quarts_fat-free chicken broth low sodium1', '1.5 pounds_asparagus diced', '.5 total_potato diced', '.5 teaspoons_yellow mustard seed', '1 dash_17-spice mix', '.5 teaspoons_dry mustard'],
+             'red pepper soup':['2 cups_white cooking wine', '1 total_onion finely chopped', '5 total_roasted red peppers', '2 cups_celery chopped', '1 tablespoons_garlic minced', '2 total_plum tomatoes chopped', '.25 cups_tomato paste', '2 cups_fat-free chicken broth low sodium', '2 tablespoons_dried thyme', '.25 teaspoons_ground white pepper', '.25 teaspoons_ground cumin'], 
+             'butternut squash soup':['1 tablespoons_shallot minced', '1 clove_garlic pressed or minced', '3 cups_butternut squash peeled and seeded', '.5 cups_fat-free chicken broth low sodium'], 
+             'gravy':['.33 cups_shallots chopped', '.33 cups_all-purpose flour', '3 cups_fat-free chicken broth low sodium', '.25 teaspoons_salt', '1 teaspoons_poultry seasoning']}
+
+log.write('\n\n')  
+log.write('Now entering the second grocery list...\n\n\n')                 
+
+# Create the second grocery list from the first grocery list to include 
+# ingredients from the dictionary of cooked foods                 
+second_grocery_dict = first_grocery_dict.copy()
+for cook in list(cook_dict.keys()):
+    for grocery in list(first_grocery_dict.keys()):
+        if cook == grocery:
+            items = cook_dict[cook]
+            for item in items:
+                portion, food = item.split('_')
+                portions, new_size = portion.split(' ')
+                number, original_size = first_grocery_dict[cook].split(' ') 
+                if original_size != 'total':
+                    number = float(1)
+                if food in list(second_grocery_dict.keys()):
+                    original_amount, original_measurement = second_grocery_dict[food].split(' ')
+                    log.write(food + ' will be overridden\n')
+                    log.write('original size is ' + original_amount + ' '+ original_measurement + '\n')
+                    log.write('new size is ' + new_size + ' ' + portions + ' multiplied by ' + str(number) + ' in ' + cook + '\n')
+                    if new_size == original_measurement:
+                        second_grocery_dict[food] = str(float(original_amount) + float(portions)*float(number)) + ' ' + original_measurement
+                        log.write('total is ' + str(second_grocery_dict[food].split(' ')[0]) + ' ' + str(second_grocery_dict[food].split(' ')[1]) + '\n\n')
+                    else:
+                        second_grocery_dict[food] = str(float(original_amount) + convert(food, float(portions), new_size, original_measurement)*float(number)) + ' ' + original_measurement
+                        log.write('total is ' + str(second_grocery_dict[food].split(' ')[0]) + ' ' + str(second_grocery_dict[food].split(' ')[1]) + '\n\n')
+                else:
+                    second_grocery_dict[food] = str(float(number)*float(portions)) + ' ' + new_size
+                    log.write('Not in list: ' + food + '\nadded by ' + str(float(portions)) + ' ' + new_size + ' multiplied by ' + str(number) + ' in ' + cook + '\n')
+                    log.write('total is ' + str(second_grocery_dict[food].split(' ')[0]) + ' ' + str(second_grocery_dict[food].split(' ')[1]) + '\n\n')
+                    
+log.write('\n')                    
+log.write('Now entering the third grocery list...' + '\n\n\n')                    
+ 
+# Create the third grocery list from the second grcoery list to include 
+# ingredients from the dictionary of cooked foods that are ingredients 
+# themselves in the dictionary of cooked foods                   
+third_grocery_dict = second_grocery_dict.copy()
+for cook in list(cook_dict.keys()):
+    if cook in list(third_grocery_dict.keys()) and cook not in (first_grocery_dict.keys()):
+        for grocery in list(cook_dict.keys()):
+            items = cook_dict[grocery]
+            for item in items:
+                portion, food = item.split('_')
+                if food == cook:
+                    log.write(portions + ' ' + new_size + ' ' + food + ' in ' + grocery)
+                    log.write('List of items in ' + food + ':\n' + str(cook_dict[food]) + '\n\n')
+                    for new_food in cook_dict[food]:
+                        portion, food = new_food.split('_')
+                        portions, new_size = portion.split(' ')
+                        if food in list(second_grocery_dict.keys()):
+                            number, original_size = second_grocery_dict[food].split(' ')                            
+                            multiplier, measurement = first_grocery_dict[grocery].split(' ')
+                            number = total_count[str(int(float((multiplier)))) + ' ' + measurement + '_' + grocery]                            
+                            original_amount, original_measurement = third_grocery_dict[food].split(' ')                     
+                            log.write(food + ' will be overridden\n')
+                            log.write('original size is ' + original_amount + ' '+ original_measurement + '\n')
+                            log.write('new size is ' + new_size + ' ' + portions + ' multiplied by ' + str(number) + ' in ' + cook + '\n')
+                            if new_size == original_measurement:
+                                third_grocery_dict[food] = str(float(original_amount) + float(portions)*float(number)) + ' ' + original_measurement
+                                log.write('total is ' + str(third_grocery_dict[food].split(' ')[0]) + ' ' + str(third_grocery_dict[food].split(' ')[1]) + '\n\n')
+                            else:
+                                third_grocery_dict[food] = str(float(original_amount) + convert(food, float(portions), new_size, original_measurement)*float(number)) + ' ' + original_measurement
+                                log.write('total is ' + str(third_grocery_dict[food].split(' ')[0]) + ' ' + str(third_grocery_dict[food].split(' ')[1]) + '\n\n')
+                        else:
+                            third_grocery_dict[food] = str(float(number)*float(portions)) + ' ' + new_size
+                            log.write('Not in list: ' + food + '\nadded by ' + str(float(portions)) + ' ' + new_size + ' multiplied by ' + str(number) + ' in ' + cook + '\n')                  
+                            log.write('total is ' + str(third_grocery_dict[food].split(' ')[0]) + ' ' + str(third_grocery_dict[food].split(' ')[1]) + '\n\n')
+
+log.write('\n')          
+log.write('Now entering the final grocery list...\n\n\n')
+   
+# Create the final grocery list that removes all entries from the third
+# grocery list that are cooked items               
+final_grocery_dict = third_grocery_dict.copy()
+for grocery in list(cook_dict.keys()):
+    if grocery in list(final_grocery_dict.keys()):
+        del final_grocery_dict[grocery]
+        log.write('Deleting entry: ' + grocery + '\n') 
+
+log.write('\n\n')
+log.write('Grocery list compiled! The final list is:\n\n\n')
+
+# Sort the final grocery list by alphabetical name of food, count the items,
+# and write the foods to the log
+sorted_list = []
+for key in list(final_grocery_dict.keys()):
+        sorted_list.append(key + '_' + final_grocery_dict[key])
+sorted_list.sort()
+
+count = 0
+for sort in sorted_list:
+    count += 1
+    key, value = sort.split('_')
+    log.write(key + ' ' + value + '\n')
+
+# Write the foods counts to the log and close it    
+log.write('\n')
+log.write('There are ' + str(count) + ' items in the list.\n')
+log.write('Done! Exiting the program.')
+log.close()        
