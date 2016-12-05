@@ -3,7 +3,7 @@ import pandas as pd
 import os
 
 # Specify pathway for initial data file and log, and create dataframe
-#os.chdir('Enter desired pathway here')
+os.chdir('/Users/WhoaaaItsDavid/Desktop')
 log = open('log.txt', 'w')
 shred1 = pd.read_csv('Shred_lvl1.txt').set_index('day')
 meals = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner']
@@ -148,7 +148,7 @@ for cook in list(cook_dict.keys()):
                 if food in list(second_grocery_dict.keys()):
                     original_amount, original_measurement = second_grocery_dict[food].split(' ')
                     log.write(food + ' will be overridden\n')
-                    log.write('original size is ' + original_amount + ' ' + original_measurement + '\n')
+                    log.write('original size is ' + original_amount + ' '+ original_measurement + '\n')
                     log.write('new size is ' + new_size + ' ' + portions + ' multiplied by ' + str(number) + ' in ' + cook + '\n')
                     if new_size == original_measurement:
                         second_grocery_dict[food] = str(float(original_amount) + float(portions)*float(number)) + ' ' + original_measurement
@@ -175,7 +175,7 @@ for cook in list(cook_dict.keys()):
             for item in items:
                 portion, food = item.split('_')
                 if food == cook:
-                    log.write(portions + ' ' + new_size + ' ' + food + ' in ' + grocery)
+                    log.write(portion + ' ' + food + ' in ' + grocery + '\n')
                     log.write('List of items in ' + food + ':\n' + str(cook_dict[food]) + '\n\n')
                     for new_food in cook_dict[food]:
                         portion, food = new_food.split('_')
