@@ -3,7 +3,7 @@ import pandas as pd
 import os
 
 # Specify pathway for initial data file and log, and create dataframe
-os.chdir('/Users/WhoaaaItsDavid/Desktop')
+#os.chdir('Enter desired pathway here')
 log = open('log.txt', 'w')
 shred1 = pd.read_csv('Shred_lvl1.txt').set_index('day')
 meals = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner']
